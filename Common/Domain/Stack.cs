@@ -52,4 +52,9 @@ public class Stack<T> : IStack<T>
 
         return item;
     }
+
+    public Item<T>? Current()
+    {
+        return _front;
+    }
 }

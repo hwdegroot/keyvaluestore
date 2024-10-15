@@ -29,4 +29,32 @@ public class QueueTests
         Assert.AreEqual(3, queue.Dequeue());
         Assert.AreEqual((uint)0, queue.Size);
     }
+
+    [TestMethod]
+    public void TraverseQueueBackAndForthShouldPeekRightItems()
+    {
+        var queue = new Common.Domain.Queue<int>();
+
+        queue.Enqueue(1);
+        queue.Enqueue(2);
+        queue.Enqueue(3);
+
+        var cursor = queue.Current();
+
+        Assert.AreEqual(1, cursor!.Value);
+        cursor = cursor.Next;
+        Assert.AreEqual(2, cursor!.Value);
+        cursor = cursor.Next;
+        Assert.AreEqual(3, cursor!.Value);
+
+        Assert.IsNull(cursor.Next);
+
+        cursor = cursor.Previous;
+        Assert.AreEqual(2, cursor!.Value);
+        cursor = cursor.Previous;
+        Assert.AreEqual(1, cursor!.Value);
+
+        Assert.IsNull(cursor.Previous);
+    }
+
 }

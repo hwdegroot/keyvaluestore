@@ -43,4 +43,9 @@ public class Queue<T> : IQueue<T>
         _size--;
         return item;
     }
+
+    public Item<T>? Current()
+    {
+        return _front;
+    }
 }
