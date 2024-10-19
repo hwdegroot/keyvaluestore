@@ -1,13 +1,15 @@
+using Common.Domain;
+
 namespace Common.Test.Domain;
 
 [TestClass]
-public class QueueTests
+public class LinkedQueueTests
 {
     [TestMethod]
     [ExpectedException(typeof(InvalidOperationException))]
     public void EmptyQueueWillNotPop()
     {
-        var queue = new Common.Domain.Queue<int>();
+        var queue = new LinkedQueue<int>();
 
         queue.Dequeue();
     }
@@ -15,7 +17,7 @@ public class QueueTests
     [TestMethod]
     public void QueueWillPopItemsInOrder()
     {
-        var queue = new Common.Domain.Queue<int>();
+        var queue = new LinkedQueue<int>();
 
         queue.Enqueue(1);
         queue.Enqueue(2);
@@ -33,7 +35,7 @@ public class QueueTests
     [TestMethod]
     public void TraverseQueueBackAndForthShouldPeekRightItems()
     {
-        var queue = new Common.Domain.Queue<int>();
+        var queue = new LinkedQueue<int>();
 
         queue.Enqueue(1);
         queue.Enqueue(2);

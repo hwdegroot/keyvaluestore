@@ -1,13 +1,15 @@
+using Common.Domain;
+
 namespace Common.Test.Domain;
 
 [TestClass]
-public class StackTests
+public class LinkedStackTests
 {
     [TestMethod]
     [ExpectedException(typeof(InvalidOperationException))]
     public void EmptyStackWillNotPop()
     {
-        var stack = new Common.Domain.Stack<int>();
+        var stack = new LinkedStack<int>();
 
         stack.Pop();
     }
@@ -15,7 +17,7 @@ public class StackTests
     [TestMethod]
     public void StackWillPopItemsInOrder()
     {
-        var stack = new Common.Domain.Stack<int>();
+        var stack = new LinkedStack<int>();
 
         stack.Push(1);
         stack.Push(2);
@@ -38,7 +40,7 @@ public class StackTests
     [TestMethod]
     public void TraverseQueueBackAndForthShouldPeekRightItems()
     {
-        var stack = new Common.Domain.Stack<int>();
+        var stack = new LinkedStack<int>();
 
         stack.Push(1);
         stack.Push(2);
