@@ -24,7 +24,8 @@ public class ArrayStack<T> : IStack<T>
     {
         if (_size == _items.Length)
         {
-            var newItems = new T[_items.Length + _initailCapacity]; // * 2
+            var newItems = new T[_items.Length * 2];
+            //var newItems = new T[_items.Length + _initailCapacity];
             for (int i = 0; i < _items.Length; i++)
             {
                 newItems[i] = _items[i];

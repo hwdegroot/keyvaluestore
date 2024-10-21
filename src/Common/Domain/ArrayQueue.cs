@@ -34,7 +34,9 @@ public class ArrayQueue<T> : IQueue<T>
             // for the new length we could also opt to check if the current length
             // of the queue is less than half of the current array size, so we do not have to copy
             // but just move the items
-            var newItems = new T[_items.Length + _initailCapacity];
+            // if the current occupied size is more than half of the available size, resize
+            // else use the existing array
+            var newItems = _items.Length <= _size * 2 ? new T[_items.Length * 2] : _items;
             // When resizing, only copy the items in the queue
             // from front till back (or items.Length - 1)
             for (uint i = _front; i < _back; i++)
