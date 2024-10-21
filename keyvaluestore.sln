@@ -5,9 +5,9 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyValueStore", "KeyValueStore\KeyValueStore.csproj", "{5DB0AA0E-ED7D-4699-8A62-6F47D49BB836}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Test", "Common.Test\Common.Test.csproj", "{D54066A0-BF5A-4E91-AD59-779C2F2F40E5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Test", "tests\Common.Test\Common.Test.csproj", "{D54066A0-BF5A-4E91-AD59-779C2F2F40E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{7D08DAE0-4FF0-420C-A116-2898AF9E53CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "src\Common\Common.csproj", "{7D08DAE0-4FF0-420C-A116-2898AF9E53CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
