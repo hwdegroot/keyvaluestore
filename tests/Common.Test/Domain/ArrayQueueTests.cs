@@ -70,7 +70,7 @@ public class ArrayQueueTests
     public void QueueWillKeepSteadySizeWhenPushPoppingItemsWithResize()
     {
         var queue = new ArrayQueue<int>(20);
-        for (var i = 0; i < 1000; i++)
+        for (var i = 1; i <= 1000; i++)
         {
             queue.Enqueue(i);
             if (i % 2 == 0)

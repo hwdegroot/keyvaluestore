@@ -2,20 +2,14 @@ namespace Common.Domain;
 
 // Implements the last-in-first-out (LIFO) stack data-structure.
 // Items are added and removed from the top of the stack only.
-public class ArrayStack<T> : IStack<T>
+public class ArrayStack<T>(uint capacity = ArrayStack<T>.InitialCapacity) : IStack<T>
 {
-    //private int? _frontCursor = null;
-    //private int? _backCursof = null;
-    private int _initailCapacity;
-    private T[] _items;
+    private const uint InitialCapacity = 10;
+    private const uint ResizeFactor = 2;
+    public uint Capacity { get; private set; } = InitialCapacity;
+    private T[] _items = new T[capacity];
     private uint _size = 0;
     public uint Size => _size;
-
-    public ArrayStack(int initialCapacity = 10)
-    {
-        _initailCapacity = initialCapacity;
-        _items = new T[_initailCapacity];
-    }
 
     /// <summary>Add an item to the top of the stack.</summary>
     /// <param name="item">The item to add to the stack.</param>
@@ -24,8 +18,8 @@ public class ArrayStack<T> : IStack<T>
     {
         if (_size == _items.Length)
         {
-            var newItems = new T[_items.Length * 2];
-            //var newItems = new T[_items.Length + _initailCapacity];
+            Capacity *= ResizeFactor;
+            var newItems = new T[Capacity];
             for (int i = 0; i < _items.Length; i++)
             {
                 newItems[i] = _items[i];
@@ -63,7 +57,6 @@ public class ArrayStack<T> : IStack<T>
 
 
         T item = _items[_size - 1];
-        //_items[_size - 1] = default(T);
 
         _size--;
 

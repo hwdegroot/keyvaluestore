@@ -5,7 +5,6 @@ namespace Common.Domain;
 public class LinkedStack<T> : IStack<T>
 {
     private Item<T>? _front = null;
-    private Item<T>? _back = null;
     private uint _size = 0;
     public uint Size => _size;
 
@@ -18,7 +17,6 @@ public class LinkedStack<T> : IStack<T>
         if (_front == null)
         {
             _front = new Item<T> { Value = item };
-            _back = _front;
         }
         else
         {
