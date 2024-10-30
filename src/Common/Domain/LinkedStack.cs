@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Common.Domain;
 
 // Implements the last-in-first-out (LIFO) stack data-structure.
@@ -34,12 +36,9 @@ public class LinkedStack<T> : IStack<T>
     /// <returns>The item at the top of the stack.</returns>
     public T Peek()
     {
-        if (_front == null)
-        {
-            throw new InvalidOperationException("Stack is empty");
-        }
+        ThrowIfEmpty();
 
-        return _front.Value;
+        return _front!.Value;
     }
 
     /// <summary>Remove and return the item at the top of the stack.</summary>
@@ -47,12 +46,9 @@ public class LinkedStack<T> : IStack<T>
     /// <returns>The item at the top of the stack.</returns>
     public T Pop()
     {
-        if (_front == null)
-        {
-            throw new InvalidOperationException("Stack is empty");
-        }
+        ThrowIfEmpty();
 
-        T item = _front.Value;
+        T item = _front!.Value;
         _front = _front.Next;
 
         if (_front != null)
@@ -68,5 +64,15 @@ public class LinkedStack<T> : IStack<T>
     public Item<T>? Current()
     {
         return _front;
+    }
+
+    public bool IsEmpty => _size == 0;
+
+    private void throwIfEmpty()
+    {
+        if (IsEmpty)
+        {
+            throw new InvalidOperationException("Stack is empty");
+        }
     }
 }

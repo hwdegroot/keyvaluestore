@@ -4,6 +4,7 @@ namespace Common.Domain;
 public interface IStack<T>
 {
     uint Size { get; }
+    bool IsEmpty { get; }
 
     void Push(T item);
     T Peek();

@@ -16,7 +16,7 @@ public class ArrayQueue<T> : IQueue<T>
         _initailCapacity = initialCapacity;
         _items = new T[_initailCapacity];
     }
-    ///
+
     /// <summary>Push a new item onto the queue.</  summary>
     /// <param name="item">The item to queue.</param>
     /// <exception cref="InvalidOperationException">Thrown when the queue is empty.</exception
@@ -59,10 +59,8 @@ public class ArrayQueue<T> : IQueue<T>
     /// <returns>The next item in the queue.</returns>
     public T Dequeue()
     {
-        if (_size == 0)
-        {
-            throw new InvalidOperationException("Queue is empty");
-        }
+
+        ThrowIfEmpty();
 
         var item = _items[_front];
         if (_front >= _back)
@@ -77,6 +75,16 @@ public class ArrayQueue<T> : IQueue<T>
         }
 
         return item;
+    }
+
+    public bool IsEmpty => _size == 0;
+
+    private void ThrowIfEmpty()
+    {
+        if (IsEmpty)
+        {
+            throw new InvalidOperationException("Queue is empty");
+        }
     }
 }
 

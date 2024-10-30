@@ -43,10 +43,7 @@ public class ArrayStack<T> : IStack<T>
     /// <returns>The item at the top of the stack.</returns>
     public T Peek()
     {
-        if (_size == 0)
-        {
-            throw new InvalidOperationException("Stack is empty");
-        }
+        ThrowIfEmpty();
 
         return _items[_size - 1];
     }
@@ -56,11 +53,7 @@ public class ArrayStack<T> : IStack<T>
     /// <returns>The item at the top of the stack.</returns>
     public T Pop()
     {
-        if (_size == 0)
-        {
-            throw new InvalidOperationException("Stack is empty");
-        }
-
+        ThrowIfEmpty();
 
         T item = _items[_size - 1];
         //_items[_size - 1] = default(T);
@@ -68,6 +61,16 @@ public class ArrayStack<T> : IStack<T>
         _size--;
 
         return item;
+    }
+
+    public bool IsEmpty => _size == 0;
+
+    private void ThrowIfEmpty()
+    {
+        if (IsEmpty)
+        {
+            throw new InvalidOperationException("Stack is empty");
+        }
     }
 }
 

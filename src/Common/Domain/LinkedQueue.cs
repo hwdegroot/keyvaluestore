@@ -34,12 +34,9 @@ public class LinkedQueue<T> : IQueue<T>
     /// <returns>The next item in the queue.</returns>
     public T Dequeue()
     {
-        if (_front == null)
-        {
-            throw new InvalidOperationException("Queue is empty");
-        }
+        ThrowIfEmpty();
 
-        var item = _front.Value;
+        var item = _front!.Value;
         _front = _front.Next;
         if (_front != null)
         {
@@ -55,5 +52,15 @@ public class LinkedQueue<T> : IQueue<T>
     public Item<T>? Current()
     {
         return _front;
+    }
+
+    public bool IsEmpty => _size == 0;
+
+    private void ThrowIfEmpty()
+    {
+        if (IsEmpty)
+        {
+            throw new InvalidOperationException("Queue is empty");
+        }
     }
 }
