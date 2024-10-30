@@ -68,11 +68,29 @@ public class LinkedStack<T> : IStack<T>
 
     public bool IsEmpty => _size == 0;
 
-    private void throwIfEmpty()
+    private void ThrowIfEmpty()
     {
         if (IsEmpty)
         {
             throw new InvalidOperationException("Stack is empty");
         }
+    }
+
+    public override string ToString()
+    {
+        if (IsEmpty)
+        {
+            return string.Empty;
+        }
+
+        var sb = new StringBuilder();
+        Item<T>? current = _front;
+        while (current != null)
+        {
+            sb.Append(current.Value);
+            current = current.Next;
+        }
+
+        return sb.ToString();
     }
 }

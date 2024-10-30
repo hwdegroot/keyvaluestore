@@ -3,41 +3,106 @@ using Calculation.Operations;
 
 namespace Calculation.Services;
 
-public class Calculator(IStack<int> stack, IOperation[] operations)
+public class Calculator(IStack<char> operatorStack, IStack<int> operandStack, IOperation[] operations)
 {
-    private readonly IStack<int> _stack = stack;
+    private readonly IStack<char> _operatorStack = operatorStack;
+    private readonly IStack<int> _operandStack = operandStack;
     private readonly IOperation[] _operations = operations;
+    public string PostfixExpression { get; private set; } = string.Empty;
+    public string OperatorStack => _operatorStack?.ToString() ?? string.Empty;
 
-    public void FromArithmicExpression(string expression)
+    private readonly Dictionary<char, int> operatorPrecedence = new Dictionary<char, int> {
+            { '+', 1 },
+            { '-', 1 },
+            { '*', 2 },
+            { '/', 2 }
+        };
+
+    private const char OpenParenthesis = '(';
+    private const char CloseParenthesis = ')';
+
+    public string Infix2PostfixExpression(string infixExpression)
     {
-        throw new NotImplementedException();
+
+        foreach (char c in infixExpression)
+        {
+            if (IsOperand(c))
+            {
+                PostfixExpression += c;
+            }
+            else if (c == OpenParenthesis)
+            {
+                _operatorStack.Push(c);
+            }
+            else if (c == CloseParenthesis)
+            {
+                while (!_operatorStack.IsEmpty && _operatorStack.Peek() != OpenParenthesis)
+                {
+                    PostfixExpression += _operatorStack.Pop();
+                }
+                _operatorStack.Pop();
+            }
+            else if (IsOperator(c))
+            {
+                while (!_operatorStack.IsEmpty && _operatorStack.Peek() >= operatorPrecedence[c])
+                {
+                    PostfixExpression += _operatorStack.Pop();
+                }
+                _operatorStack.Push(c);
+            }
+        }
+        while (!_operatorStack.IsEmpty)
+        {
+            PostfixExpression += _operatorStack.Pop();
+        }
+        return PostfixExpression;
     }
 
-    public int Evaluate(string expression)
+    public int Calculate(string infixExpression)
     {
-        foreach (char c in expression)
+        string postfixExpression = Infix2PostfixExpression(infixExpression);
+        return Evaluate(postfixExpression);
+    }
+
+    public int Evaluate(string postfixExpression)
+    {
+        foreach (char c in postfixExpression)
         {
             if (char.IsDigit(c))
             {
-                _stack.Push(int.Parse(c.ToString()));
+                _operandStack.Push(int.Parse(c.ToString()));
+            }
+            else if (IsOperator(c))
+            {
+                IOperation operation = _operations.FirstOrDefault(op => op.Symbol == c) ?? throw new InvalidOperationException("Unknown operator");
+                int b = _operandStack.Pop();
+                int a = _operandStack.Pop();
+                int result = operation.Calculate(a, b);
+
+                _operandStack.Push(result);
             }
             else
             {
-                IOperation operation = _operations.First(op => op.Symbol == c);
-                // If no operation, throw
-                int b = _stack.Pop();
-                int a = _stack.Pop();
-                int result = operation.Calculate(a, b);
-                _stack.Push(result);
+                throw new InvalidOperationException("Invalid expression");
             }
         }
 
         // The result should be the only item in the stack
-        if (_stack.Size != 1)
+        if (_operandStack.Size != 1)
         {
             throw new InvalidOperationException("Invalid expression");
         }
 
-        return _stack.Pop();
+        return _operandStack.Pop();
+    }
+
+    private bool IsOperator(char c)
+    {
+        return _operations.Any(op => op.Symbol == c);
+    }
+
+    private bool IsOperand(char c)
+    {
+        return char.IsDigit(c);
     }
 }
