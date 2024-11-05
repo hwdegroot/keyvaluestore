@@ -4,9 +4,9 @@ using Calculation.Test.Fixtures;
 namespace Calculation.Test.Services;
 
 [TestClass]
-public class CalculationTests(CalculatorFixture fixture)
+public class CalculationTests
 {
-    private readonly Calculator Calculator = fixture.Calculator;
+    private CalculatorFixture Fixture = new();
 
     [TestMethod]
     public void PostfixExpression_ReturnsValidCalculation()
@@ -16,7 +16,7 @@ public class CalculationTests(CalculatorFixture fixture)
         string postfixExpression = "12345**-+67*+";
 
         // Act
-        int result = Calculator.Evaluate(postfixExpression);
+        int result = Fixture.Calculator.Evaluate(postfixExpression);
 
         // Assert
         Assert.AreEqual(-15, result);
@@ -28,7 +28,7 @@ public class CalculationTests(CalculatorFixture fixture)
         // Arrange
         string infixExpression = "1+2-3*4*5+6*7";
         // Act
-        var result = Calculator.Calculate(infixExpression);
+        var result = Fixture.Calculator.Calculate(infixExpression);
         // Assert
         Assert.AreEqual(-15, result);
     }
