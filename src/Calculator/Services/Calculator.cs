@@ -21,7 +21,7 @@ public class Calculator(IStack<char> operatorStack, IStack<int> operandStack, IO
     private const char OpenParenthesis = '(';
     private const char CloseParenthesis = ')';
 
-    public string Infix2PostfixExpression(string infixExpression)
+    private string Infix2PostfixExpression(string infixExpression)
     {
 
         foreach (char c in infixExpression)
@@ -44,7 +44,7 @@ public class Calculator(IStack<char> operatorStack, IStack<int> operandStack, IO
             }
             else if (IsOperator(c))
             {
-                while (!_operatorStack.IsEmpty && _operatorStack.Peek() >= operatorPrecedence[c])
+                while (!_operatorStack.IsEmpty && operatorPrecedence[_operatorStack.Peek()] >= operatorPrecedence[c])
                 {
                     PostfixExpression += _operatorStack.Pop();
                 }
