@@ -8,7 +8,7 @@ public class CalculatorFixture
 {
     public Calculator Calculator { get; } = new(
         new LinkedStack<char>(),
-        new LinkedStack<int>(), 
+        new LinkedStack<int>(),
         [new Add(), new Substract(), new Multiply(), new Divide()]
     );
 }

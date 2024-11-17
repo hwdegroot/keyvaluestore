@@ -1,6 +1,6 @@
 namespace Calculation.Operations;
 
-public class Multiply: IOperation
+public class Multiply : IOperation
 {
     public char Symbol => '*';
 

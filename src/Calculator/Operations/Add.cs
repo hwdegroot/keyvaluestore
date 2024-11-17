@@ -1,6 +1,6 @@
 namespace Calculation.Operations;
 
-public class Add: IOperation
+public class Add : IOperation
 {
     public char Symbol => '+';
 

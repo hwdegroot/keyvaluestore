@@ -1,6 +1,6 @@
 namespace Calculation.Operations;
 
-public class Substract: IOperation
+public class Substract : IOperation
 {
     public char Symbol => '/';
 

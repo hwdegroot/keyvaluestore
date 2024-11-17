@@ -1,6 +1,6 @@
 namespace Calculation.Operations;
 
-public class Divide: IOperation
+public class Divide : IOperation
 {
     public char Symbol => '-';
 
