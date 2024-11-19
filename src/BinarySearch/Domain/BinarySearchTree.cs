@@ -1,79 +1,139 @@
 using BinarySearch.Enums;
+using Common.Domain;
 
 namespace BinarySearch.Domain;
 
-class BinarySearchTree<T> : IBinarySearchTree<T> where T : IComparable<T>
+class BinarySearchTree<T> : IBinarySearchTree<T> where T : Comparable<T>
 {
-    public Node<T>? Root { get; private set; }
+    public INode<T> Root { get; init; }
 
     public BinarySearchTree(IEnumerable<T> values)
     {
+        if (values.Count() == 0)
+        {
+            throw new ArgumentException("Values cannot be empty", nameof(values));
+        }
 
-        foreach (var value in values)
+        Root = new Node<T>(values.First());
+        foreach (var value in values.Skip(1))
         {
             Insert(value);
         }
 
     }
 
+    private Direction DetermineDirection(T value, INode<T> current)
+    {
+        if (value.Equals(current.Value))
+        {
+            throw new ArgumentException("Value already exists in tree", nameof(value));
+        }
+
+        if (value.SmallerThan(current.Value))
+        {
+            return Direction.Left;
+        }
+        return Direction.Right;
+    }
+
+    private bool ShouldInsertLeft(T value, INode<T> current)
+    {
+        return current.Left == null && DetermineDirection(value, current) == Direction.Left ||
+              DetermineDirection(value, current) == Direction.Left && value.GreaterThan(current.Left!.Value);
+    }
+
+    private bool ShouldInsertRight(T value, INode<T> current)
+    {
+        return current.Right == null && DetermineDirection(value, current) == Direction.Right ||
+              DetermineDirection(value, current) == Direction.Right && value.SmallerThan(current.Right!.Value);
+    }
+
+    private void InsertLeft(T value, INode<T> current)
+    {
+        var newNode = new Node<T>(value);
+        newNode.Parent = current;
+        newNode.Left = newNode.Parent.Left;
+        current.Left = newNode;
+    }
+
+    private void InsertRight(T value, INode<T> current)
+    {
+        var newNode = new Node<T>(value);
+        newNode.Parent = current;
+        newNode.Right = newNode.Parent.Right;
+        current.Right = newNode;
+    }
+
     public void Insert(T value)
     {
-        if (Root == null)
+        INode<T> current = Root;
+
+        while (!current.IsLeaf)
         {
-            Root = new Node<T>(value);
+            if (ShouldInsertLeft(value, current))
+            {
+                InsertLeft(value, current);
+                return;
+            }
+
+            if (ShouldInsertRight(value, current))
+            {
+                InsertRight(value, current);
+                return;
+            }
+
+            current = DetermineDirection(value, current) == Direction.Left ? current.Left! : current.Right!;
+        }
+
+        if (ShouldInsertRight(value, current))
+        {
+            InsertRight(value, current);
             return;
         }
 
-        Direction? direction = null;
-        INode<T> current = Root;
-        INode<T>? parent = null;
+        InsertLeft(value, current);
+    }
 
-
-        while (parent == null)
+    private void RemoveNode(INode<T> node)
+    {
+        if (node == null)
         {
-            if (value.CompareTo(current.Value) >= 0)
-            {
-                direction = Direction.Left;
-            }
-            else
-            {
-                direction = Direction.Right;
-            }
-
-            if (direction == Direction.Left && current.Left == null)
-            {
-                parent = current;
-            }
-            else if (direction == Direction.Left && value.CompareTo(current.Left!.Value) <= 0)
-            {
-                parent = current;
-            }
-            else if (direction == Direction.Right && current.Right == null)
-            {
-                parent = current;
-            }
-            else if (direction == Direction.Right && value.CompareTo(current.Right!.Value) > 0)
-            {
-                parent = current;
-            }
-            else if (current.IsLeaf)
-            {
-                parent = current;
-            }
-            current = direction == Direction.Left ? current.Left! : current.Right!;
+            throw new ArgumentException("Node is null", nameof(node));
         }
 
-        var newNode = new Node<T>(value);
-        newNode.Parent = parent;
-        if (direction == Direction.Left)
+        if (node.Left != null)
         {
-            newNode.Left = parent.Left;
-            parent.Left = newNode;
+            if (node.Right != null)
+            {
+                if (!node.IsRoot) {
+                    node.Parent!.Left = node.Right;
+                    node.Right.Parent = node.Parent;
+                }
+                var newLeftNodeParent = node.Right;
+                while (newLeftNodeParent.Left != null)
+                {
+                    newLeftNodeParent = newLeftNodeParent.Left;
+                }
+                newLeftNodeParent.Left = node.Left;
+                node.Left.Parent = newLeftNodeParent;
+            }
+            else if (!node.IsRoot)
+            {
+                node.Parent!.Left = node.Left;
+                node.Left.Parent = node.Parent;
+            }
         }
-        else
+        else if (node.Right != null && !node.IsRoot)
         {
-            newNode.Right = parent.Right;
-            parent.Right = newNode;
+            if (node.IsRightChild)
+            {
+                node.Parent!.Right = node.Right;
+            }
+            else if (node.IsLeftChild)
+            {
+                node.Parent!.Left = node.Right;
+            }
+            node.Right.Parent = node.Parent;
         }
     }
 
@@ -87,8 +147,7 @@ class BinarySearchTree<T> : IBinarySearchTree<T> where T : IComparable<T>
 
         if (node.IsRoot)
         {
-            // TODO: promote new node to root
-            throw new ArgumentException("Cannot remove root node", nameof(value));
+            RemoveNode(Root!);
         }
 
         if (node.IsLeaf)
@@ -121,34 +180,23 @@ class BinarySearchTree<T> : IBinarySearchTree<T> where T : IComparable<T>
             return null;
         }
 
-        INode<T>? current = Root;
+        INode<T> current = Root;
         while (current != null && !current.IsLeaf)
         {
-            if (current!.Value.Equals(value))
+            if (current.Value.Equals(value)) return current;
+
+            if (value.SmallerThan(current.Value) && (current.Left == null || value.GreaterThan(current.Left.Value)))
             {
-                return current;
+                return null;
             }
 
-            if (current!.Value.CompareTo(value) > 0)
+            if (value.GreaterThan(current.Value) && (current.Right == null || value.SmallerThan(current.Right.Value)))
             {
-                // parent bigger than value, but child smaller
-                // The value is not in the tree
-                if (current.Left == null || current.Left!.Value.CompareTo(value) < 0)
-                {
-                    return null;
-                }
-                current = current!.Left;
+                return null;
             }
-            else
-            {
-                // parent smaller than value, but child bigger
-                // The value is not in the tree
-                if (current.Right == null || current.Right!.Value.CompareTo(value) > 0)
-                {
-                    return null;
-                }
-                current = current!.Right;
-            }
+
+            current = DetermineDirection(value, current) == Direction.Left ? current.Left! : current.Right!;
+
         }
         return null;
     }
