@@ -3,7 +3,7 @@ using Common.Domain;
 
 namespace BinarySearch.Domain;
 
-class BinarySearchTree<T> : IBinarySearchTree<T> where T : Comparable<T>
+public class BinarySearchTree<T> : IBinarySearchTree<T> where T : IComparable
 {
     public INode<T> Root { get; init; }
 
@@ -29,7 +29,7 @@ class BinarySearchTree<T> : IBinarySearchTree<T> where T : Comparable<T>
             throw new ArgumentException("Value already exists in tree", nameof(value));
         }
 
-        if (value.SmallerThan(current.Value))
+        if (Compare.SmallerThan(value, current.Value))
         {
             return Direction.Left;
         }
@@ -38,21 +38,21 @@ class BinarySearchTree<T> : IBinarySearchTree<T> where T : Comparable<T>
 
     private bool ShouldInsertLeft(T value, INode<T> current)
     {
-        return current.Left == null && DetermineDirection(value, current) == Direction.Left ||
-              DetermineDirection(value, current) == Direction.Left && value.GreaterThan(current.Left!.Value);
+        return current.Left == null && DetermineDirection(value, current) == Direction.Left;
+        // || DetermineDirection(value, current) == Direction.Left && Compare.GreaterThan(value, current.Left!.Value);
     }
 
     private bool ShouldInsertRight(T value, INode<T> current)
     {
-        return current.Right == null && DetermineDirection(value, current) == Direction.Right ||
-              DetermineDirection(value, current) == Direction.Right && value.SmallerThan(current.Right!.Value);
+        return current.Right == null && DetermineDirection(value, current) == Direction.Right;
+        // || DetermineDirection(value, current) == Direction.Right && Compare.SmallerThan(value, current.Right!.Value);
     }
 
     private void InsertLeft(T value, INode<T> current)
     {
         var newNode = new Node<T>(value);
         newNode.Parent = current;
-        newNode.Left = newNode.Parent.Left;
+        newNode.Left = current.Left;
         current.Left = newNode;
     }
 
@@ -60,7 +60,7 @@ class BinarySearchTree<T> : IBinarySearchTree<T> where T : Comparable<T>
     {
         var newNode = new Node<T>(value);
         newNode.Parent = current;
-        newNode.Right = newNode.Parent.Right;
+        newNode.Right = current.Right;
         current.Right = newNode;
     }
 
@@ -105,7 +105,8 @@ class BinarySearchTree<T> : IBinarySearchTree<T> where T : Comparable<T>
         {
             if (node.Right != null)
             {
-                if (!node.IsRoot) {
+                if (!node.IsRoot)
+                {
                     node.Parent!.Left = node.Right;
                     node.Right.Parent = node.Parent;
                 }
@@ -180,22 +181,22 @@ class BinarySearchTree<T> : IBinarySearchTree<T> where T : Comparable<T>
             return null;
         }
 
-        INode<T> current = Root;
-        while (current != null && !current.IsLeaf)
+        INode<T>? current = Root;
+        while (current != null)
         {
             if (current.Value.Equals(value)) return current;
 
-            if (value.SmallerThan(current.Value) && (current.Left == null || value.GreaterThan(current.Left.Value)))
+            if (Compare.SmallerThan(value, current.Value) && (current.Left == null || Compare.GreaterThan(value, current.Left.Value)))
             {
                 return null;
             }
 
-            if (value.GreaterThan(current.Value) && (current.Right == null || value.SmallerThan(current.Right.Value)))
+            if (Compare.GreaterThan(value, current.Value) && (current.Right == null || Compare.SmallerThan(value, current.Right.Value)))
             {
                 return null;
             }
 
-            current = DetermineDirection(value, current) == Direction.Left ? current.Left! : current.Right!;
+            current = DetermineDirection(value, current) == Direction.Left ? current.Left : current.Right;
 
         }
         return null;
